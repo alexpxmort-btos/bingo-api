@@ -1,6 +1,6 @@
 import { Card } from './Card';
 
-export type BingoRule = 'line' | 'column' | 'full' | 'diagonal';
+export type BingoRule = 'line' | 'column' | 'full';
 
 export interface Visitor {
   visitorId: string;
@@ -105,11 +105,6 @@ export class Game {
         case 'column':
           for (let i = 0; i < 5; i++) {
             if (card.checkColumn(i)) return true;
-          }
-          break;
-        case 'diagonal':
-          if (card.checkDiagonal(true) || card.checkDiagonal(false)) {
-            return true;
           }
           break;
         case 'full':

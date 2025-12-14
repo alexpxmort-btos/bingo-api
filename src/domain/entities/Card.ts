@@ -48,17 +48,6 @@ export class Card {
     return this.cells.every(row => row.every(cell => cell.marked));
   }
 
-  checkDiagonal(main: boolean = true): boolean {
-    const size = Math.min(this.cells.length, this.cells[0]?.length || 0);
-    if (main) {
-      return Array.from({ length: size }, (_, i) => this.cells[i]?.[i])
-        .every(cell => cell?.marked);
-    } else {
-      return Array.from({ length: size }, (_, i) => this.cells[i]?.[size - 1 - i])
-        .every(cell => cell?.marked);
-    }
-  }
-
   static generate(ownerId: string, ownerName: string): Card {
     const id = `card-${Date.now()}-${Math.random().toString(36).substring(7)}`;
     const numbers = Card.generateBingoNumbers();
