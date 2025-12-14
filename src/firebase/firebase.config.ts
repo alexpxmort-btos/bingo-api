@@ -52,7 +52,9 @@ export function initializeFirebase(): void {
         
         // Tentar parse direto primeiro
         try {
-          serviceAccountJson = JSON.parse(serviceAccount);
+          serviceAccountJson = JSON.parse(
+            serviceAccount.replace(/\\n/g, '\n'),
+          );
         } catch (parseError: any) {
           console.warn('⚠️ Erro ao fazer parse direto do JSON. Tentando corrigir...');
           
