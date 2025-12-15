@@ -67,18 +67,43 @@ export class GameService {
       throw new NotFoundException('Jogo não encontrado');
     }
 
+    // Validar se o jogo está em andamento
+    if (room.game.isFinished) {
+      throw new BadRequestException('O jogo já terminou');
+    }
+
+    // Validar se a cartela pertence ao visitante
+    const card = room.game.cards.find(c => c.id === cardId);
+    if (!card) {
+      throw new NotFoundException('Cartela não encontrada');
+    }
+
+    if (card.ownerId !== visitorId) {
+      throw new BadRequestException('Esta cartela não pertence a você');
+    }
+
+    // Validar se há números sorteados
+    if (!room.game.drawnNumbers || room.game.drawnNumbers.length === 0) {
+      throw new BadRequestException('Nenhum número foi sorteado ainda');
+    }
+
+    // Validar o bingo
     const isValid = room.game.validateBingo(cardId);
     
     if (isValid) {
+      // Se for válido, o jogo já foi finalizado no método validateBingo
+      const winnerCard = room.game.cards.find(c => c.id === cardId);
       this.appGateway.emitToRoom(roomCode, 'bingo-validated', {
         cardId,
         visitorId,
-        isValid,
+        isValid: true,
+        winnerName: winnerCard?.ownerName || 'Desconhecido',
       });
     } else {
       this.appGateway.emitToRoom(roomCode, 'bingo-invalid', {
         cardId,
         visitorId,
+        message: 'Bingo inválido. Verifique se você completou uma linha, coluna ou cartela cheia.',
       });
     }
 
